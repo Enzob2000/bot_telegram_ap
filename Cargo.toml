@@ -1,0 +1,14 @@
+[package]
+name = "bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+enigo="0.3.0"
+teloxide="0.13.0"
+dotenv="0.15.0"
+tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
+regex="1"
+image = "0.23"
+screenshots = "0.8.10"
+
