@@ -58,7 +58,7 @@ pub async fn telegram() {
                 _ => {
 
                     let grup=grupo(task.grupo);
-                    let file = Path::new("2776250164-2.png");
+                    let file = Path::new("capture.png");
                     bot1.send_photo(grup.clone(), InputFile::file(file))
                         .await;
                     bot1.send_message(grup,task.nombre).await;
@@ -72,7 +72,7 @@ pub async fn telegram() {
                 }
             }
 
-            fs::remove_file("2776250164-2.png");
+            fs::remove_file("capture.png");
         }
     });
 

@@ -7,11 +7,12 @@ mod jugada;
 mod pantalla;
 use pantalla::capture;
 mod texto;
-use texto::{lector};
+use texto::lector;
+
 
 #[tokio::main]
 async fn main(){
 
-telegram().await;
-
+//telegram().await;
+lector();
 }

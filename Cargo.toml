@@ -4,11 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
 enigo="0.3.0"
 teloxide="0.13.0"
 dotenv="0.15.0"
 tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
 regex="1"
-image = "0.23"
+image = "0.25.5"
 screenshots = "0.8.10"
+ocrs="0.9.0"
+thiserror = "2.0.3"
+anyhow = "1.0.92"
+rayon = "1.10.0" 
+rten = "0.13.1" 
+rten-imageproc = { version = "0.14.1" }
+rten-tensor = { version = "0.14.1" }
+fastrand = "2.1.1"
+lexopt = "0.3.0"
 
+
+
+
+ 

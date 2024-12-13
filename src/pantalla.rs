@@ -11,7 +11,7 @@ pub fn capture() {
     
             image = screen.capture_area(588, 30, 350, 700).unwrap();
             image
-                .save(format!("{}-2.png", screen.display_info.id))
+                .save(format!("capture.png"))
                 .unwrap();
 
       

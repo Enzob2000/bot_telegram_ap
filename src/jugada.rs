@@ -93,7 +93,7 @@ pub async fn auto(numer: Vec<String>, cantidad: String, tipo: String) -> &'stati
 
     //resumen de tikect
 
-    match lector() {
+    match lector().unwrap() {
         "Agotado" => {
             //modificar
             modificar(&mut enigo);
