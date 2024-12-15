@@ -1,7 +1,7 @@
 use screenshots::Screen;
 use std::time::Instant;
 
-pub fn capture() {
+pub async  fn capture() {
     let start = Instant::now();
     let screens = Screen::all().unwrap();
 

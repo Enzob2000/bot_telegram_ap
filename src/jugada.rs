@@ -87,23 +87,25 @@ pub async fn auto(numer: Vec<String>, cantidad: String, tipo: String) -> &'stati
     enigo.move_mouse(1218, 356, Abs);
     enigo.button(Button::Left, Click);
 
-    sleep(Duration::from_secs(5));
+    sleep(Duration::from_secs(2));
 
-    capture();
-
-    //resumen de tikect
-
-    match lector().unwrap() {
+    capture().await;
+    println!("llego aqui");
+    match lector().await.unwrap() {
         "Agotado" => {
             //modificar
-            modificar(&mut enigo);
+            modificar(&mut enigo).await;
 
             return "Agotado";
-        }
+        },
         "numero" => {
-            numero(&mut enigo);
+            numero(&mut enigo).await;
             return "numero";
-        }
+        },
+        "VAR"=>{
+            imprimir(&mut enigo).await;
+          return "VAR"
+        },
         _ => {
             //imprimir
 
@@ -113,7 +115,7 @@ pub async fn auto(numer: Vec<String>, cantidad: String, tipo: String) -> &'stati
     }
 }
 
-fn imprimir(enigo: &mut Enigo) {
+async fn imprimir(enigo: &mut Enigo) {
     enigo.move_mouse(661, 667, Abs);
     enigo.button(Button::Left, Click);
 
@@ -125,7 +127,7 @@ fn imprimir(enigo: &mut Enigo) {
     sleep(Duration::from_secs(2));
 }
 
-fn modificar(enigo: &mut Enigo) {
+async fn modificar(enigo: &mut Enigo) {
     enigo.move_mouse(772, 684, Abs);
     enigo.button(Button::Left, Click);
 
@@ -137,7 +139,7 @@ fn modificar(enigo: &mut Enigo) {
     sleep(Duration::from_secs(2));
 }
 
-fn numero(enigo: &mut Enigo) {
+async fn numero(enigo: &mut Enigo) {
     enigo.move_mouse(835, 474, Abs);
     enigo.button(Button::Left, Click);
 

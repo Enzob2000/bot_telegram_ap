@@ -2,20 +2,21 @@ use crate::expre::eval;
 use crate::jugada::auto;
 use crate::pantalla::capture;
 use dotenv::dotenv;
-use dptree::HandlerResult;
+use dptree::{entry, HandlerResult};
 use enigo::agent::Token;
 use std::{
     clone, collections::HashMap, env, fs, hash::Hash, path::Path, sync::{
         mpsc::{self, Sender},
         Arc, Mutex,
-    }, vec
+    }, thread::sleep, time::Duration, vec
 };
 use teloxide::{
     dispatching::dialogue::GetChatId,
     prelude::*,
     types::{InputFile, InputMediaPhoto, Recipient},
 };
-
+use tokio::{runtime::Runtime, time::sleep as sl};
+use tokio::task::spawn_blocking;
 type HHandlerResult = Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
 #[derive(Clone, Default)]
@@ -44,7 +45,7 @@ pub async fn telegram() {
 
     let mut bot = Bot::new("7564267258:AAHG2Vf22EU3sxfm75lFVowG_13GVuSzW_Y");
     let mut bot1 = bot.clone();
-    tokio::spawn(async move {
+    spawn_blocking(  move||{Runtime::new().unwrap().block_on(async{
         while let Ok(task) = rx.recv() {
             match auto(task.numeros, task.cantidad, task.tipo).await {
                 "Agotado" => {
@@ -55,9 +56,12 @@ pub async fn telegram() {
                 "numero"=>{
                     bot1.send_message(task.id,"Los numeros solicitados estan agotados").await;
                 },
+                "VAR"=>{
+                    bot1.send_message(task.id,"Los sorteos estan finalizados por hoy").await;
+                }
                 _ => {
 
-                    let grup=grupo(task.grupo);
+                    let grup=grupo(task.grupo).await;
                     let file = Path::new("capture.png");
                     bot1.send_photo(grup.clone(), InputFile::file(file))
                         .await;
@@ -74,26 +78,39 @@ pub async fn telegram() {
 
             fs::remove_file("capture.png");
         }
+    })
     });
+        
+        let handler=dptree::entry()
+        .branch(Update::filter_message().endpoint(recep));
 
-    Dispatcher::builder(bot, Update::filter_message().endpoint(recep))
-        .dependencies(dptree::deps![tx])
-        .build()
-        .dispatch()
-        .await;
-}
+   let es= Dispatcher::builder(bot, handler)
+        .enable_ctrlc_handler()
+            .dependencies(dptree::deps![tx])
+            .build()
+            .dispatch()
+            .await;
+        
+       
+         
+
+
+      
+    
+    }
+
 
 async fn recep(bot: Bot, msg: Message, tx: Ar) -> HHandlerResult {
-    let start = format!("Bienvenido\nformato nombre (animalito1,animalito2,animalito3) monto l(lotto) o g(granjita)");
-
-    if let Some(mensage) = msg.text() {
+    let start = format!("Bienvenido\nformato a seguir:\nnombre\ngrupo(Dos primeras letras)\n(animalito1,animalito2,animalito3)\nmonto\nl(lotto) o g(granjita)\nTodo separado por espacios");
+   println!("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    if   let Some(mensage) = msg.text() {
         match mensage {
             "/start" => {
-                bot.send_message(msg.chat.id, start).await;
+                bot.send_message(msg.chat.id, start.clone()).await;
             }
-            _ => match eval(mensage) {
+            _ => match eval(mensage).await {
                 Ok((nombre,grupo, plis, cantida, tipo)) => {
-                    async move {
+                     {
                         let cola = Arc::clone(&tx);
                         let tx = cola.lock().unwrap();
                         tx.send(sala {
@@ -105,7 +122,7 @@ async fn recep(bot: Bot, msg: Message, tx: Ar) -> HHandlerResult {
                             grupo:grupo
                         })
                     }
-                    .await;
+                    ;
                 }
                 Err(e) => {
                     bot.send_message(msg.chat.id, e).await;
@@ -117,7 +134,7 @@ async fn recep(bot: Bot, msg: Message, tx: Ar) -> HHandlerResult {
     Ok(())
 }
 
-fn grupo(inicial:String)->String{
+async fn grupo(inicial:String)->String{
 
     let mut grup=HashMap::new();
 

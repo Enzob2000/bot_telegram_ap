@@ -13,6 +13,6 @@ use texto::lector;
 #[tokio::main]
 async fn main(){
 
-//telegram().await;
-lector();
+telegram().await;
+
 }
